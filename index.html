@@ -900,15 +900,36 @@
       pointer-events: auto;
     }
 
-    .lightbox-img {
+    .lightbox-wrapper {
+      position: relative;
+      display: inline-block;
       max-width: 90vw;
       max-height: 85vh;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
       transform-origin: center center;
-      transition: transform 0.1s ease-out;
-      cursor: zoom-in;
-      user-select: none;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: auto;
+      cursor: zoom-in;
+    }
+
+    .lightbox-img {
+      display: block;
+      max-width: 90vw;
+      max-height: 85vh;
+      width: auto;
+      height: auto;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+      user-select: none;
+    }
+
+    .lightbox-corner-logo {
+      position: absolute;
+      bottom: -85px;
+      left: -20px;
+      width: clamp(140px, 14vw, 250px);
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 1001;
+      filter: brightness(1.2);
     }
 
 
@@ -1534,7 +1555,7 @@
   <nav>
     <div class="nav-inner">
       <div class="nav-logo">
-        <img src="logo/Logos333.png" alt="Few Hands Studio Logo">
+        <img src="logo/FHS test1.png" alt="Few Hands Studio Logo">
       </div>
       <div class="nav-links-wrapper">
         <ul class="nav-links">
@@ -1615,7 +1636,7 @@
 
       <div class="player-box">
         <div class="player-inner">
-          <iframe src="https://player.vimeo.com/video/1182137840?h=080712e3b0&title=0&byline=0&portrait=0&color=D35400"
+          <iframe src="https://player.vimeo.com/video/1187951523?h=b2ee18d357&title=0&byline=0&portrait=0&color=D35400"
             frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
             style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
         </div>
@@ -2042,7 +2063,7 @@
         if (!target) return;
 
         const brandingImg = document.createElement('img');
-        brandingImg.src = 'logo/Logos33.png';
+        brandingImg.src = 'logo/FHS letras2.png';
         brandingImg.classList.add('corner-branding');
 
         // Select random corner
@@ -2075,11 +2096,15 @@
         <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
-    <img id="lightbox-img" class="lightbox-img" src="" alt="Full Scale Render">
+    <div id="lightbox-wrapper" class="lightbox-wrapper">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Full Scale Render">
+      <img src="logo/FHS letras2.png" class="lightbox-corner-logo" alt="Few Hands Studio Logo">
+    </div>
   </div>
 
   <script> // LIGHTBOX ADVANCED LOGIC
     const lb = document.getElementById('lightbox');
+    const lbWrapper = document.getElementById('lightbox-wrapper');
     const lbImg = document.getElementById('lightbox-img');
     const lbClose = document.getElementById('lightbox-close-btn');
 
@@ -2122,17 +2147,17 @@
       isZoomed = false;
       translateX = 0;
       translateY = 0;
-      lbImg.style.transform = `translate(0px, 0px) scale(1)`;
-      lbImg.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-      lbImg.style.cursor = 'zoom-in';
+      lbWrapper.style.transform = `translate(0px, 0px) scale(1)`;
+      lbWrapper.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      lbWrapper.style.cursor = 'zoom-in';
     }
 
     function updateImageTransform() {
-      lbImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      lbWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     }
 
     // Toggle Zoom on Click
-    lbImg.addEventListener('click', (e) => {
+    lbWrapper.addEventListener('click', (e) => {
       if (!lb.classList.contains('active')) return;
       if (isDragging) return; // Prevent click after dragging
       e.stopPropagation();
@@ -2151,8 +2176,8 @@
         translateX = -offsetX / scale;
         translateY = -offsetY / scale;
 
-        lbImg.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-        lbImg.style.cursor = 'grab';
+        lbWrapper.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        lbWrapper.style.cursor = 'grab';
         updateImageTransform();
       } else {
         resetImageState();
@@ -2167,7 +2192,7 @@
     });
 
     // Panning (Drag)
-    lbImg.addEventListener('mousedown', (e) => {
+    lbWrapper.addEventListener('mousedown', (e) => {
       if (!isZoomed) return;
       e.preventDefault(); // Prevent default image drag
       isDragging = false;
@@ -2176,8 +2201,8 @@
       startDragX = e.clientX;
       startDragY = e.clientY;
 
-      lbImg.style.transition = 'none';
-      lbImg.style.cursor = 'grabbing';
+      lbWrapper.style.transition = 'none';
+      lbWrapper.style.cursor = 'grabbing';
 
       function onMouseMove(moveEvent) {
         const dx = moveEvent.clientX - startDragX;
@@ -2193,7 +2218,7 @@
       }
 
       function onMouseUp() {
-        lbImg.style.cursor = 'grab';
+        lbWrapper.style.cursor = 'grab';
         window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('mouseup', onMouseUp);
         // Small delay to prevent click event if we were dragging
@@ -2226,8 +2251,8 @@
         scale = newScale;
         isZoomed = scale > 1;
 
-        lbImg.style.transition = 'transform 0.1s linear';
-        lbImg.style.cursor = isZoomed ? 'grab' : 'zoom-in';
+        lbWrapper.style.transition = 'transform 0.1s linear';
+        lbWrapper.style.cursor = isZoomed ? 'grab' : 'zoom-in';
 
         if (scale === 1) resetImageState();
         else updateImageTransform();
